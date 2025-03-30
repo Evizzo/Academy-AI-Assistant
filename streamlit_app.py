@@ -38,10 +38,9 @@ for msg in conversationData["messages"]:
     )
 st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div class='input-container'>", unsafe_allow_html=True)
-user_input = st.text_input("Poruka", placeholder="Unesite poruku...", key="user_input", label_visibility="collapsed")
-send_button = st.button("Pošalji")
-st.markdown("</div>", unsafe_allow_html=True)
+with st.form("chat_form", clear_on_submit=True):
+    user_input = st.text_input("Poruka", placeholder="Unesite poruku...", key="user_input", label_visibility="collapsed")
+    send_button = st.form_submit_button("Pošalji")
 
 if send_button and user_input.strip():
     handleUserMessage(user_input)
