@@ -20,13 +20,13 @@ load_custom_css()
 
 st.sidebar.header("Istorija četa")
 conversationData = loadConversation()
-for msg in conversationData["messages"]:
+for msg in conversationData.get("messages", []):
     prefix = "Vi:" if msg["sender"] == "User" else "Bot:"
     short_content = msg["content"][:50] + ("..." if len(msg["content"]) > 50 else "")
     st.sidebar.markdown(f"**{prefix}** {short_content}")
 
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
-for msg in conversationData["messages"]:
+for msg in conversationData.get("messages", []):
     alignment = "user" if msg["sender"] == "User" else "bot"
     st.markdown(
         f"""
@@ -38,10 +38,15 @@ for msg in conversationData["messages"]:
     )
 st.markdown("</div>", unsafe_allow_html=True)
 
+spinner_placeholder = st.empty()
+
 with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input("Poruka", placeholder="Unesite poruku...", key="user_input", label_visibility="collapsed")
     send_button = st.form_submit_button("Pošalji")
 
 if send_button and user_input.strip():
-    handleUserMessage(user_input)
+    with spinner_placeholder:
+        with st.spinner("Molim sačekajte, obrađujem vašu poruku..."):
+            handleUserMessage(user_input)
+    spinner_placeholder.empty()
     st.rerun()
