@@ -1,0 +1,89 @@
+body, .block-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+[data-testid="stHeader"] {
+    display: none !important;
+}
+
+body::before {
+    content: "Chatbot – Akademija strukovnih studija Šumadija, Odsek Aranđelovac";
+    display: block;
+    text-align: center;
+    background-color: #EFA900;
+    color: #FFFFFF;
+    padding: 1rem 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+    position: relative;
+    z-index: 999;
+}
+
+[data-testid="stSidebar"] .sidebar-content {
+    background-color: #0052A0;
+    color: #FFFFFF;
+    padding: 1rem;
+}
+
+.chat-container {
+    max-width: 900px;
+    margin: 1rem auto;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    height: auto;
+    overflow-y: visible;
+}
+
+.message-wrapper {
+    display: flex;
+    margin-bottom: 1rem;
+}
+.message-wrapper.user {
+    justify-content: flex-end;
+}
+.message-wrapper.bot {
+    justify-content: flex-start;
+}
+.chat-bubble {
+    padding: 10px 16px;
+    border-radius: 16px;
+    max-width: 70%;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+.chat-bubble.user {
+    background-color: #0052A0;
+    color: #FFFFFF;
+    border-bottom-right-radius: 0;
+}
+.chat-bubble.bot {
+    background-color: #EFA900;
+    color: #000;
+    border-bottom-left-radius: 0;
+}
+
+.input-container {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem auto;
+    max-width: 900px;
+}
+.input-container input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+.input-container button {
+    background-color: #EFA900;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    color: #FFFFFF;
+    font-weight: bold;
+    cursor: pointer;
+}

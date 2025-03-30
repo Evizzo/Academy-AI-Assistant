@@ -1,0 +1,25 @@
+[theme]
+primaryColor = "#EFA900"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F7F7F7"
+textColor = "#000000"
+font = "sans serif"
+base="light"
+
+[server]
+headless = true
+address = "0.0.0.0"
+port = 5000
+
+[browser]
+showToolbar = false
+
+[global]
+hideStreamlitMarker = true
+
+[client]
+toolbarMode = "minimal"
+
+[ui]
+hideTopBar = true
+
