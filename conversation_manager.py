@@ -5,13 +5,18 @@ def loadConversation():
     if not os.path.exists(CONVERSATION_FILE):
         data = {"chatName": "", "messages": []}
         saveConversation(data)
-    else:
-        try:
-            with open(CONVERSATION_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except json.JSONDecodeError:
-            data = {"chatName": "", "messages": []}
-            saveConversation(data)
+    try:
+        with open(CONVERSATION_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError:
+        data = {"chatName": "", "messages": []}
+        saveConversation(data)
+        return data
+
+    if not isinstance(data, dict) or "messages" not in data:
+        data = {"chatName": "", "messages": []}
+        saveConversation(data)
+
     return data
 
 def saveConversation(data):
