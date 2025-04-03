@@ -1,23 +1,19 @@
-/* Reset i osnovni stilovi */
 body, .block-container {
     margin: 0 !important;
     padding: 0 !important;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Sakri podrazumevani header */
 [data-testid="stHeader"] {
     display: none !important;
 }
 
-/* Sidebar */
 [data-testid="stSidebar"] .sidebar-content {
     background-color: #0052A0;
     color: #FFFFFF;
     padding: 1rem;
 }
 
-/* Glavni chat kontejner */
 .chat-container {
     max-width: 900px;
     margin: 1rem auto;
@@ -28,7 +24,6 @@ body, .block-container {
     overflow-y: visible;
 }
 
-/* Poruke – mehurići */
 .message-wrapper {
     display: flex;
     margin-bottom: 1rem;
@@ -57,7 +52,6 @@ body, .block-container {
     border-bottom-left-radius: 0;
 }
 
-/* Input i dugme */
 .input-container {
     display: flex;
     gap: 0.5rem;

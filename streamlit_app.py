@@ -4,7 +4,6 @@ import time
 from conversation_manager import loadConversations, createNewChat, getChat, deleteChat
 from endpoints import handleUserMessage
 
-# Inicijalizuj session state ključ ako ne postoji
 if "selected_chat_id" not in st.session_state:
     st.session_state.selected_chat_id = None
 
@@ -23,14 +22,11 @@ st.set_page_config(
 )
 load_custom_css()
 
-# Učitaj sve chat-ove
 data = loadConversations()
 chats = data.get("chats", [])
 
-# ----- Sidebar -----
 st.sidebar.header("Chat istorija")
 
-# Dugme za kreiranje novog chata na vrhu sidebar-a
 if st.sidebar.button("Kreiraj novi chat"):
     new_chat = createNewChat("Novi Chat")
     st.session_state.selected_chat_id = new_chat["id"]
@@ -38,9 +34,7 @@ if st.sidebar.button("Kreiraj novi chat"):
 
 st.sidebar.write("---")
 
-# Ako ima chat-ova, prikazi ih; inače, obavesti korisnika
 if chats:
-    # Kombinovani prikaz – ime + dugme za brisanje u istom redu
     for chat in chats:
         cols = st.sidebar.columns([0.8, 0.2])
         with cols[0]:
@@ -50,7 +44,6 @@ if chats:
         with cols[1]:
             if st.button("🗑️", key=f"delete_{chat['id']}"):
                 deleteChat(chat["id"])
-                # Nakon brisanja, ako ima još chat-ova, postavi prvi; inače, postavi None
                 updated_data = loadConversations()
                 updated_chats = updated_data.get("chats", [])
                 st.session_state.selected_chat_id = updated_chats[0]["id"] if updated_chats else None
@@ -58,7 +51,6 @@ if chats:
 else:
     st.sidebar.write("Nema kreiranih chat-ova. Kliknite 'Kreiraj novi chat'.")
 
-# ----- Glavni chat prikaz -----
 selected_chat = getChat(st.session_state.selected_chat_id) if st.session_state.selected_chat_id else None
 
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
@@ -80,10 +72,8 @@ else:
     st.markdown("<p>Nema selektovanog chata. Kreirajte novi chat!</p>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Placeholder za spinner iznad forme
 spinner_placeholder = st.empty()
 
-# Forma za unos poruke
 with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input("Poruka", placeholder="Unesite poruku...", key="user_input", label_visibility="collapsed")
     send_button = st.form_submit_button("Pošalji")
