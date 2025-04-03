@@ -1,7 +1,12 @@
 import streamlit as st
 import os
-from conversation_manager import loadConversation
+import time
+from conversation_manager import loadConversations, createNewChat, getChat, deleteChat
 from endpoints import handleUserMessage
+
+# Inicijalizuj session state ključ ako ne postoji
+if "selected_chat_id" not in st.session_state:
+    st.session_state.selected_chat_id = None
 
 def load_custom_css():
     css_path = os.path.join(".streamlit", "styles.css")
@@ -18,28 +23,67 @@ st.set_page_config(
 )
 load_custom_css()
 
-st.sidebar.header("Istorija četa")
-conversationData = loadConversation()
-for msg in conversationData.get("messages", []):
-    prefix = "Vi:" if msg["sender"] == "User" else "Bot:"
-    short_content = msg["content"][:50] + ("..." if len(msg["content"]) > 50 else "")
-    st.sidebar.markdown(f"**{prefix}** {short_content}")
+# Učitaj sve chat-ove
+data = loadConversations()
+chats = data.get("chats", [])
+
+# ----- Sidebar -----
+st.sidebar.header("Chat istorija")
+
+# Dugme za kreiranje novog chata na vrhu sidebar-a
+if st.sidebar.button("Kreiraj novi chat"):
+    new_chat = createNewChat("Novi Chat")
+    st.session_state.selected_chat_id = new_chat["id"]
+    st.rerun()
+
+st.sidebar.write("---")
+
+# Ako ima chat-ova, prikazi ih; inače, obavesti korisnika
+if chats:
+    # Kombinovani prikaz – ime + dugme za brisanje u istom redu
+    for chat in chats:
+        cols = st.sidebar.columns([0.8, 0.2])
+        with cols[0]:
+            if st.button(f"{chat['chatName']} ({chat['id'][:8]})", key=f"select_{chat['id']}"):
+                st.session_state.selected_chat_id = chat["id"]
+                st.rerun()
+        with cols[1]:
+            if st.button("🗑️", key=f"delete_{chat['id']}"):
+                deleteChat(chat["id"])
+                # Nakon brisanja, ako ima još chat-ova, postavi prvi; inače, postavi None
+                updated_data = loadConversations()
+                updated_chats = updated_data.get("chats", [])
+                st.session_state.selected_chat_id = updated_chats[0]["id"] if updated_chats else None
+                st.rerun()
+else:
+    st.sidebar.write("Nema kreiranih chat-ova. Kliknite 'Kreiraj novi chat'.")
+
+# ----- Glavni chat prikaz -----
+selected_chat = getChat(st.session_state.selected_chat_id) if st.session_state.selected_chat_id else None
 
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
-for msg in conversationData.get("messages", []):
-    alignment = "user" if msg["sender"] == "User" else "bot"
-    st.markdown(
-        f"""
-        <div class="message-wrapper {alignment}">
-            <div class="chat-bubble {alignment}">{msg['content']}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+if selected_chat:
+    if selected_chat.get("messages"):
+        for msg in selected_chat["messages"]:
+            alignment = "user" if msg["sender"] == "User" else "bot"
+            st.markdown(
+                f"""
+                <div class="message-wrapper {alignment}">
+                    <div class="chat-bubble {alignment}">{msg['content']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+    else:
+        st.markdown("<p>Nema poruka u ovom chatu.</p>", unsafe_allow_html=True)
+else:
+    st.markdown("<p>Nema selektovanog chata. Kreirajte novi chat!</p>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
+# Placeholder za spinner iznad forme
 spinner_placeholder = st.empty()
 
+# Forma za unos poruke
 with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input("Poruka", placeholder="Unesite poruku...", key="user_input", label_visibility="collapsed")
     send_button = st.form_submit_button("Pošalji")
@@ -47,6 +91,7 @@ with st.form("chat_form", clear_on_submit=True):
 if send_button and user_input.strip():
     with spinner_placeholder:
         with st.spinner("Molim sačekajte, obrađujem vašu poruku..."):
-            handleUserMessage(user_input)
+            handleUserMessage(st.session_state.selected_chat_id, user_input)
+            time.sleep(1)
     spinner_placeholder.empty()
     st.rerun()
