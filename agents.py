@@ -5,6 +5,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 import json
 from prompts import examPrompt, generalPrompt, orchestrationAgent
 from logger import logger
+from vectorSearch import search_context
 
 load_dotenv()
 
@@ -49,7 +50,11 @@ def orchestrateAgent(query, conversationHistory):
     else:
         return generalAgent(query, conversationHistory)
 
-def runAgent(query, conversationHistory, promptTemplate, **promptVars):
+def runAgent(query, conversationHistory, promptTemplate, vector_search=False, **promptVars):
+    if vector_search:
+        vector_context = search_context(query)
+        promptVars["context"] = vector_context
+
     formattedPrompt = formatPrompt(promptTemplate, **promptVars) if promptVars else promptTemplate
 
     shortTermMemory = "\n".join([f'{msg["sender"]}: {msg["content"]}' for msg in conversationHistory])
@@ -58,7 +63,6 @@ def runAgent(query, conversationHistory, promptTemplate, **promptVars):
         {"role": "system", "content": formattedPrompt + "\nShort term memory:\n" + shortTermMemory},
         {"role": "user", "content": query}
     ]
-    logger.debug(f"Pozivam globalModel sa porukama: {messages}")
 
     try:
         response = globalModel.invoke(messages).content.strip()
@@ -75,4 +79,4 @@ def examAgent(query, conversationHistory):
 
 def generalAgent(query, conversationHistory):
     logger.info("Korišćenje general agenta.")
-    return runAgent(query, conversationHistory, generalPrompt)
+    return runAgent(query, conversationHistory, generalPrompt, vector_search=True)
