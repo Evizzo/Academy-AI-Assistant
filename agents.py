@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from consts import MODEL_NAME, EXAM_DATES_FILE
+from consts import EXAM_DATES_FILE
 from langchain_google_genai import ChatGoogleGenerativeAI
 import json
 from prompts import examPrompt, generalPrompt, orchestrationAgent
@@ -8,11 +8,11 @@ from logger import logger
 
 load_dotenv()
 
-google_api_key = os.getenv("GOOGLE_API_KEY")
-logger.info("Google API key učitan iz .env okruženja.")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME")
 
-globalModel = ChatGoogleGenerativeAI(model=MODEL_NAME, temperature=0.05, google_api_key=google_api_key)
-logger.info(f"Inicijalizovan globalModel sa modelom {MODEL_NAME}.")
+globalModel = ChatGoogleGenerativeAI(model=LLM_MODEL_NAME, temperature=0.05, google_api_key=GOOGLE_API_KEY)
+logger.info(f"Inicijalizovan globalModel sa modelom {LLM_MODEL_NAME}.")
 
 def formatPrompt(promptTemplate, **variables):
     formatted = promptTemplate.format(**variables)
