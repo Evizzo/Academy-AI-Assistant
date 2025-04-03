@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from consts import MODEL_NAME, EXAM_DATES_FILE
 from langchain_google_genai import ChatGoogleGenerativeAI
 import json
-from prompts import examPrompt, generalPrompt
+from prompts import examPrompt, generalPrompt, orchestrationAgent
 from logger import logger
 
 load_dotenv()
@@ -39,8 +39,12 @@ def getExamDates():
         return ""
 
 def orchestrateAgent(query, conversationHistory):
-    logger.info(f"Orkestriram agenta za upit: {query}")
-    if "ispit" in query.lower():
+    logger.info(f"Orkestriram agente za upit: {query}")
+    response = runAgent(query, conversationHistory, orchestrationAgent)
+    logger.info(f"Odabrani agent je: **{response}**")
+    if response == "Ne znam.":
+        return "Molim pokusajte ponovo"
+    if response == 'exam':
         return examAgent(query, conversationHistory)
     else:
         return generalAgent(query, conversationHistory)
