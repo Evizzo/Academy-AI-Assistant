@@ -22,11 +22,20 @@ def formatPrompt(promptTemplate, **variables):
 def getExamDates():
     try:
         with open(EXAM_DATES_FILE, "r", encoding="utf-8") as f:
-            examDates = json.load(f)
-        logger.info("Učitani exam datumi.")
-        return ", ".join([f"{name}: {date}" for name, date in examDates.items()])
+            examDetails = json.load(f)
+        logger.info("Učitani exam detalji.")
+        formatted_details = []
+        for exam in examDetails:
+            predmet = exam.get("predmet", "Nepoznato")
+            profesor = exam.get("profesor", "Nepoznat")
+            datum = exam.get("datum", "Nepoznat")
+            vise_detalja = exam.get("vise_detalja", "Nema dodatnih informacija")
+            formatted_details.append(
+                f"Predmet: {predmet}, Profesor: {profesor}, Datum: {datum}, Detalji: {vise_detalja}"
+            )
+        return "\n".join(formatted_details)
     except Exception as e:
-        logger.error(f"Greška pri učitavanju exam datuma: {e}")
+        logger.error(f"Greška pri učitavanju exam detalja: {e}")
         return ""
 
 def orchestrateAgent(query, conversationHistory):
@@ -58,7 +67,7 @@ def runAgent(query, conversationHistory, promptTemplate, **promptVars):
 
 def examAgent(query, conversationHistory):
     logger.info("Korišćenje exam agenta.")
-    return runAgent(query, conversationHistory, examPrompt, examDates=getExamDates())
+    return runAgent(query, conversationHistory, examPrompt, examDetails=getExamDates())
 
 def generalAgent(query, conversationHistory):
     logger.info("Korišćenje general agenta.")

@@ -1,5 +1,20 @@
-{
-    "Matematika": "2023-06-01",
-    "Fizika": "2023-06-05",
-    "Hemija": "2023-06-10"
-}
+[
+  {
+    "predmet": "Matematika",
+    "profesor": "Dr. Marko Marković",
+    "datum": "2023-06-01",
+    "vise_detalja": "Ispit se održava u ucionici 1, traje 2 sata."
+  },
+  {
+    "predmet": "Fizika",
+    "profesor": "Prof. Jelena Jovanović",
+    "datum": "2023-06-05",
+    "vise_detalja": "Ispit se održava u sali 203, obavezno poneti kalkulator."
+  },
+  {
+    "predmet": "Hemija",
+    "profesor": "Dr. Nikola Nikolić",
+    "datum": "2023-06-10",
+    "vise_detalja": "Ispit se održava u laboratoriji, uključuje praktični deo."
+  }
+]
