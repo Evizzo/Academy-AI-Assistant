@@ -2,8 +2,12 @@ import os
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
+
 from logger import logger
 import torch
+
+from prompts import resolveSerbianLatin
+
 if hasattr(torch.classes, '__path__'):
     torch.classes.__path__ = []
 load_dotenv()
@@ -27,6 +31,9 @@ INDEX = initialize_pinecone()
 EMBEDDING_MODEL = SentenceTransformer(EMBEDDING_MODEL_NAME)
 
 def search_context(query: str) -> str:
+    from agents import runAgentSimple
+    query = runAgentSimple(query, resolveSerbianLatin)
+    logger.info(f"Optimised Serbian latin: {query}")
     query_embedding = EMBEDDING_MODEL.encode(query).tolist()
     result = INDEX.query(vector=query_embedding, top_k=TOP_K, include_metadata=True)
     contexts = []

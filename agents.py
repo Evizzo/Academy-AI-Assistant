@@ -15,6 +15,19 @@ LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME")
 globalModel = ChatGoogleGenerativeAI(model=LLM_MODEL_NAME, temperature=0.05, google_api_key=GOOGLE_API_KEY)
 logger.info(f"Inicijalizovan globalModel sa modelom {LLM_MODEL_NAME}.")
 
+def runAgentSimple(query, promptTemplate):
+    messages = [
+        {"role": "system", "content": promptTemplate},
+        {"role": "user", "content": query}
+    ]
+
+    try:
+        response = globalModel.invoke(messages).content.strip()
+    except Exception as e:
+        logger.error(f"Greška pri pozivu globalModel.invoke: {e}")
+        response = "Došlo je do greške."
+    return response
+
 def formatPrompt(promptTemplate, **variables):
     formatted = promptTemplate.format(**variables)
     logger.debug(f"Formatiran prompt: {formatted}")
