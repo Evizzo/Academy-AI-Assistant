@@ -1,7 +1,6 @@
 import json, uuid, os
 from consts import CONVERSATION_FILE, INTRO_MESSAGE
 
-
 def loadConversations():
     if not os.path.exists(CONVERSATION_FILE):
         data = {"chats": []}
@@ -23,10 +22,11 @@ def saveConversations(data):
     with open(CONVERSATION_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-def createNewChat(chatName="Novi Chat"):
+def createNewChat(chatName="Novi Chat", client_id=None):
     data = loadConversations()
     chat = {
         "id": str(uuid.uuid4()),
+        "client_id": client_id,
         "chatName": chatName,
         "messages": []
     }
@@ -36,11 +36,16 @@ def createNewChat(chatName="Novi Chat"):
     createMessage(chat["id"], first_message, "Bot")
     return chat
 
-def getChat(chat_id):
+def getConversationsForClient(client_id):
+    data = loadConversations()
+    return [chat for chat in data["chats"] if chat.get("client_id") == client_id]
+
+def getChat(chat_id, client_id=None):
     data = loadConversations()
     for chat in data["chats"]:
         if chat["id"] == chat_id:
-            return chat
+            if client_id is None or chat.get("client_id") == client_id:
+                return chat
     return None
 
 def createMessage(chat_id, content, sender):
@@ -59,9 +64,9 @@ def createMessage(chat_id, content, sender):
             return message
     return None
 
-def deleteChat(chat_id):
+def deleteChat(chat_id, client_id=None):
     data = loadConversations()
-    data["chats"] = [chat for chat in data["chats"] if chat["id"] != chat_id]
+    data["chats"] = [chat for chat in data["chats"] if chat["id"] != chat_id or (client_id and chat.get("client_id") != client_id)]
     saveConversations(data)
 
 def updateMessage(chat_id, messageId, newContent):

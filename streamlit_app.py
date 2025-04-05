@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import time
 import json
-from conversation_manager import loadConversations, createNewChat, getChat, deleteChat
+from conversation_manager import loadConversations, createNewChat, getChat, deleteChat, getConversationsForClient
 from endpoints import handleUserMessage
 
 def loadClients():
@@ -26,15 +26,18 @@ if not st.session_state.logged_in:
         valid = any(user["username"] == username and user["password"] == password for user in clients.get("users", []))
         if valid:
             st.session_state.logged_in = True
+            st.session_state.client_id = username
             st.rerun()
         else:
             st.error("Neispravno korisničko ime ili lozinka")
     st.stop()
 
+chats = getConversationsForClient(st.session_state.client_id)
+
 if "selected_chat_id" not in st.session_state:
     st.session_state.selected_chat_id = None
 if "initialized" not in st.session_state:
-    new_chat = createNewChat("Novi Chat")
+    new_chat = createNewChat("Novi Chat", st.session_state.client_id)
     st.session_state.selected_chat_id = new_chat["id"]
     st.session_state.initialized = True
 
@@ -53,13 +56,10 @@ st.set_page_config(
 )
 load_custom_css()
 
-data = loadConversations()
-chats = data.get("chats", [])
-
 st.sidebar.header("Chat istorija")
 
 if st.sidebar.button("Kreiraj novi chat"):
-    new_chat = createNewChat("Novi Chat")
+    new_chat = createNewChat("Novi Chat", st.session_state.client_id)
     st.session_state.selected_chat_id = new_chat["id"]
     st.rerun()
 
@@ -74,15 +74,14 @@ if chats:
                 st.rerun()
         with cols[1]:
             if st.button("🗑️", key=f"delete_{chat['id']}"):
-                deleteChat(chat["id"])
-                updated_data = loadConversations()
-                updated_chats = updated_data.get("chats", [])
-                st.session_state.selected_chat_id = updated_chats[0]["id"] if updated_chats else None
+                deleteChat(chat["id"], st.session_state.client_id)
+                chats = getConversationsForClient(st.session_state.client_id)
+                st.session_state.selected_chat_id = chats[0]["id"] if chats else None
                 st.rerun()
 else:
     st.sidebar.write("Nema kreiranih chat-ova. Kliknite 'Kreiraj novi chat'.")
 
-selected_chat = getChat(st.session_state.selected_chat_id) if st.session_state.selected_chat_id else None
+selected_chat = getChat(st.session_state.selected_chat_id, st.session_state.client_id) if st.session_state.selected_chat_id else None
 
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
 if selected_chat:
