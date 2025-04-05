@@ -69,7 +69,7 @@ if chats:
     for chat in chats:
         cols = st.sidebar.columns([0.8, 0.2])
         with cols[0]:
-            if st.button(f"{chat['chatName']} ({chat['id'][:8]})", key=f"select_{chat['id']}"):
+            if st.button(f"{chat['chatName']}", key=f"select_{chat['id']}"):
                 st.session_state.selected_chat_id = chat["id"]
                 st.rerun()
         with cols[1]:

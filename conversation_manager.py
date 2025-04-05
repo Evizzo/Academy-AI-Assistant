@@ -38,7 +38,8 @@ def createNewChat(chatName="Novi Chat", client_id=None):
 
 def getConversationsForClient(client_id):
     data = loadConversations()
-    return [chat for chat in data["chats"] if chat.get("client_id") == client_id]
+    chats = [chat for chat in data["chats"] if chat.get("client_id") == client_id]
+    return list(reversed(chats))
 
 def getChat(chat_id, client_id=None):
     data = loadConversations()
@@ -57,8 +58,8 @@ def createMessage(chat_id, content, sender):
                 "sender": sender,
                 "content": content
             }
-            if not chat.get("chatName") and content:
-                chat["chatName"] = content[:50]
+            if sender == "User" and not any(msg["sender"] == "User" for msg in chat["messages"]):
+                chat["chatName"] = content[:50] + ("..." if len(content) > 50 else "")
             chat["messages"].append(message)
             saveConversations(data)
             return message
