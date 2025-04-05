@@ -1,8 +1,35 @@
 import streamlit as st
 import os
 import time
+import json
 from conversation_manager import loadConversations, createNewChat, getChat, deleteChat
 from endpoints import handleUserMessage
+
+def loadClients():
+    json_path = "clients.json"
+    if os.path.exists(json_path):
+        with open(json_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    else:
+        st.error("Fajl clients.json nije pronađen!")
+        return {"users": []}
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if not st.session_state.logged_in:
+    st.title("Login")
+    username = st.text_input("Korisničko ime")
+    password = st.text_input("Lozinka", type="password")
+    if st.button("Prijavi se"):
+        clients = loadClients()
+        valid = any(user["username"] == username and user["password"] == password for user in clients.get("users", []))
+        if valid:
+            st.session_state.logged_in = True
+            st.rerun()
+        else:
+            st.error("Neispravno korisničko ime ili lozinka")
+    st.stop()
 
 if "selected_chat_id" not in st.session_state:
     st.session_state.selected_chat_id = None
