@@ -73,19 +73,16 @@ if selected_chat:
     else:
         st.markdown("<p>Nema poruka u ovom chatu.</p>", unsafe_allow_html=True)
 else:
-    st.markdown("<p>Nema selektovanog chata. Kreirajte novi chat!</p>", unsafe_allow_html=True)
+    st.markdown("<h1><strong>Dobrodošli na chatbot Akademij!<br>Kreirajte novi chat da započnete konverzaciju.</strong></h1>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
-spinner_placeholder = st.empty()
+if selected_chat:
+    with st.form("chat_form", clear_on_submit=True):
+        user_input = st.text_input("Poruka", placeholder="Unesite poruku...", key="user_input", label_visibility="collapsed")
+        send_button = st.form_submit_button("Pošalji")
 
-with st.form("chat_form", clear_on_submit=True):
-    user_input = st.text_input("Poruka", placeholder="Unesite poruku...", key="user_input", label_visibility="collapsed")
-    send_button = st.form_submit_button("Pošalji")
-
-if send_button and user_input.strip():
-    with spinner_placeholder:
+    if send_button and user_input.strip():
         with st.spinner("Molim sačekajte, obrađujem vašu poruku..."):
             handleUserMessage(st.session_state.selected_chat_id, user_input)
             time.sleep(1)
-    spinner_placeholder.empty()
-    st.rerun()
+        st.rerun()
