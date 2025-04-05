@@ -1,5 +1,6 @@
 import json, uuid, os
-from consts import CONVERSATION_FILE
+from consts import CONVERSATION_FILE, INTRO_MESSAGE
+
 
 def loadConversations():
     if not os.path.exists(CONVERSATION_FILE):
@@ -31,6 +32,8 @@ def createNewChat(chatName="Novi Chat"):
     }
     data["chats"].append(chat)
     saveConversations(data)
+    first_message = INTRO_MESSAGE
+    createMessage(chat["id"], first_message, "Bot")
     return chat
 
 def getChat(chat_id):

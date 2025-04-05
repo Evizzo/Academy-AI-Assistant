@@ -6,6 +6,10 @@ from endpoints import handleUserMessage
 
 if "selected_chat_id" not in st.session_state:
     st.session_state.selected_chat_id = None
+if "initialized" not in st.session_state:
+    new_chat = createNewChat("Novi Chat")
+    st.session_state.selected_chat_id = new_chat["id"]
+    st.session_state.initialized = True
 
 def load_custom_css():
     css_path = os.path.join(".streamlit", "styles.css")
