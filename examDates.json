@@ -1,20 +1,50 @@
 [
   {
-    "predmet": "Matematika",
-    "profesor": "Dr. Marko Marković",
+    "predmet": "Teorija odlučivanja",
+    "profesor": "Miroslav Markovic",
     "datum": "2023-06-01",
     "vise_detalja": "Ispit se održava u ucionici 1, traje 2 sata."
   },
   {
-    "predmet": "Fizika",
+    "predmet": "Matematika",
     "profesor": "Prof. Jelena Jovanović",
     "datum": "2023-06-05",
     "vise_detalja": "Ispit se održava u sali 203, obavezno poneti kalkulator."
   },
   {
-    "predmet": "Hemija",
-    "profesor": "Dr. Nikola Nikolić",
+    "predmet": "Programiranje",
+    "profesor": "Nemanja Vujanovic",
     "datum": "2023-06-10",
     "vise_detalja": "Ispit se održava u laboratoriji, uključuje praktični deo."
+  },
+  {
+    "predmet": "Fizika",
+    "profesor": "Dragan Petrović",
+    "datum": "2023-06-15",
+    "vise_detalja": "Ispit se održava u laboratoriji, obavezno poneti zaštitne naočare."
+  },
+  {
+    "predmet": "Hemija",
+    "profesor": "Ana Savić",
+    "datum": "2023-06-20",
+    "vise_detalja": "Ispit se održava u sali 105, fokus na organsku hemiju."
+  },
+  {
+    "predmet": "Biologija",
+    "profesor": "Dragan Marković",
+    "datum": "2023-06-25",
+    "vise_detalja": "Ispit se održava u učionici 4, pokriva teme genetike i ekologije."
+  },
+  {
+    "predmet": "Istorija",
+    "profesor": "Milica Lukić",
+    "datum": "2023-07-01",
+    "vise_detalja": "Ispit se održava u sali 302, potrebno je pripremiti eseje o istorijskim događajima."
+  },
+  {
+    "predmet": "Geografija",
+    "profesor": "Svetlana Janković",
+    "datum": "2023-07-05",
+    "vise_detalja": "Ispit se održava u učionici 2, obavezno poneti atlas."
   }
 ]
