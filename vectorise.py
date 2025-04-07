@@ -5,6 +5,13 @@ from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone, ServerlessSpec
 from logger import logger
+from simple_term_menu import TerminalMenu
+
+def choose_chunking_method():
+    options = ["1. Segmentacija po rečenicama", "2. Segmentacija na osnovu '----------------'"]
+    terminal_menu = TerminalMenu(options, title="Izaberite metod segmentacije:")
+    menu_entry_index = terminal_menu.show()
+    return menu_entry_index + 1
 
 load_dotenv()
 
@@ -13,7 +20,6 @@ PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 TOP_K = int(os.getenv("TOP_K", "15"))
 EMBEDDING_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 PINECONE_ENV = os.getenv("PINECONE_ENV", "us-west1-gcp")
-DATA_FILE = "dataToVectorise/data.txt"
 CHUNK_SIZE = 3
 INDEX_DIMENSION = 384
 
@@ -37,11 +43,14 @@ INDEX = initialize_pinecone()
 EMBEDDING_MODEL = SentenceTransformer(EMBEDDING_MODEL_NAME)
 
 
-def split_text(text: str, chunk_size: int = CHUNK_SIZE) -> list:
+def split_text_by_sentences(text, chunk_size=3):
     sentences = re.split(r'(?<!\d{4})(?<=[.!?])\s+', text)
-    logger.debug(f"Split text into {len(sentences)} sentences.")
     return [' '.join(sentences[i:i + chunk_size]) for i in range(0, len(sentences), chunk_size)]
 
+
+def split_text_by_delimiter(text, delimiter="----------------"):
+    chunks = text.split(delimiter)
+    return [chunk.strip() for chunk in chunks if chunk.strip()]
 
 def get_embedding(text: str) -> list:
     try:
@@ -54,10 +63,22 @@ def get_embedding(text: str) -> list:
 
 
 def main():
-    with open(DATA_FILE, "r", encoding="utf-8") as f:
+    datafile = input("Unesite putanju do tekstualnog fajla: ")
+
+    with open(datafile, "r", encoding="utf-8") as f:
         text_data = f.read()
-    chunks = split_text(text_data, CHUNK_SIZE)
-    logger.info(f"Created {len(chunks)} text chunks.")
+
+    chunking_method = choose_chunking_method()
+
+    if chunking_method == 1:
+        chunks = split_text_by_sentences(text_data, CHUNK_SIZE)
+    elif chunking_method == 2:
+        chunks = split_text_by_delimiter(text_data)
+    else:
+        print("Nepoznat izbor. Izlaz iz programa.")
+        return
+
+    logger.info(f"Kreirano {len(chunks)} segmenata teksta.")
 
     vectors = []
     now = datetime.now().isoformat()
@@ -65,16 +86,16 @@ def main():
         try:
             embedding = get_embedding(chunk)
             vectors.append((str(i), embedding, {"text": chunk, "date_vectorised": now}))
-            logger.info(f"Generated embedding for chunk {i}.")
+            logger.info(f"Generisan embedding za segment {i}.")
         except Exception as e:
-            logger.error(f"Error for chunk {i}: {e}")
+            logger.error(f"Greška pri obradi segmenta {i}: {e}")
             continue
 
     if vectors:
         INDEX.upsert(vectors=vectors)
-        logger.info(f"Upserted {len(vectors)} vectors into Pinecone index '{PINECONE_INDEX_NAME}'.")
+        logger.info(f"Upisano {len(vectors)} vektora u Pinecone indeks '{PINECONE_INDEX_NAME}'.")
     else:
-        logger.warning("No vectors to upsert.")
+        logger.warning("Nema vektora za upis.")
 
 
 if __name__ == "__main__":

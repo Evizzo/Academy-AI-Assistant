@@ -6,3 +6,4 @@ pinecone~=6.0.2
 python-dotenv~=1.1.0
 torch~=2.6.0
 tiktoken
+simple-term-menu
