@@ -1,7 +1,14 @@
+from consts import MAX_INPUT_TOKENS
 from conversation_manager import createMessage, getLastMessages
 from agents import orchestrateAgent
+from inputValidation import numTokens
+
 
 def handleUserMessage(chat_id, user_text):
+    if numTokens(user_text) > MAX_INPUT_TOKENS:
+        warning = "Your message is too long and exceeds the token limit."
+        createMessage(chat_id, warning, "Bot")
+        return
     createMessage(chat_id, user_text, "User")
     history = getLastMessages(chat_id, n=5)
     response = orchestrateAgent(user_text, history)
