@@ -1,8 +1,7 @@
 import os
 from dotenv import load_dotenv
-from consts import EXAM_DATES_FILE
 from langchain_google_genai import ChatGoogleGenerativeAI
-import json
+from db import getDbConnection
 from prompts import examPrompt, generalPrompt, orchestrationAgent
 from logger import logger
 from vectorSearch import search_context
@@ -35,11 +34,13 @@ def formatPrompt(promptTemplate, **variables):
 
 def getExamDates():
     try:
-        with open(EXAM_DATES_FILE, "r", encoding="utf-8") as f:
-            examDetails = json.load(f)
-        logger.info("Učitani exam detalji.")
+        connection = getDbConnection()
+        cursor = connection.cursor(dictionary=True)
+        query = "SELECT predmet, profesor, datum, vise_detalja FROM examDates"
+        cursor.execute(query)
+        rows = cursor.fetchall()
         formatted_details = []
-        for exam in examDetails:
+        for exam in rows:
             predmet = exam.get("predmet", "Nepoznato")
             profesor = exam.get("profesor", "Nepoznat")
             datum = exam.get("datum", "Nepoznat")
@@ -47,9 +48,12 @@ def getExamDates():
             formatted_details.append(
                 f"Predmet: {predmet}, Profesor: {profesor}, Datum: {datum}, Detalji: {vise_detalja}"
             )
+        cursor.close()
+        connection.close()
+        logger.info("Učitani exam detalji iz baze.")
         return "\n".join(formatted_details)
     except Exception as e:
-        logger.error(f"Greška pri učitavanju exam detalja: {e}")
+        logger.error(f"Greška pri učitavanju exam detalja iz baze: {e}")
         return ""
 
 def orchestrateAgent(query, conversationHistory):

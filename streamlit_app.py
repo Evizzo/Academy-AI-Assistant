@@ -1,18 +1,19 @@
 import streamlit as st
 import os
 import time
-import json
-from conversation_manager import loadConversations, createNewChat, getChat, deleteChat, getConversationsForClient
+from conversation_manager import createNewChat, getChat, deleteChat, getConversationsForClient
 from endpoints import handleUserMessage
+from db import getDbConnection
 
-def loadClients():
-    json_path = "clients.json"
-    if os.path.exists(json_path):
-        with open(json_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    else:
-        st.error("Fajl clients.json nije pronađen!")
-        return {"users": []}
+def getClientRecord(username):
+    connection = getDbConnection()
+    cursor = connection.cursor(dictionary=True)
+    query = "SELECT id, username, password FROM clients WHERE username = %s"
+    cursor.execute(query, (username,))
+    client = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return client
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -22,11 +23,11 @@ if not st.session_state.logged_in:
     username = st.text_input("Korisničko ime")
     password = st.text_input("Lozinka", type="password")
     if st.button("Prijavi se"):
-        clients = loadClients()
-        valid = any(user["username"] == username and user["password"] == password for user in clients.get("users", []))
-        if valid:
+        client = getClientRecord(username)
+        if client and password == client["password"]:
             st.session_state.logged_in = True
-            st.session_state.client_id = username
+            st.session_state.client_id = client["id"]
+            st.session_state.username = client["username"]
             st.rerun()
         else:
             st.error("Neispravno korisničko ime ili lozinka")
