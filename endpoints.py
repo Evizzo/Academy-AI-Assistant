@@ -1,4 +1,4 @@
-from consts import MAX_INPUT_TOKENS
+from consts import MAX_INPUT_TOKENS, MAX_SIZE_SHORT_TERM_MEMORY
 from conversation_manager import createMessage, getLastMessages
 from agents import orchestrateAgent
 from inputValidation import numTokens
@@ -10,6 +10,6 @@ def handleUserMessage(chat_id, user_text):
         createMessage(chat_id, warning, "Bot")
         return
     createMessage(chat_id, user_text, "User")
-    history = getLastMessages(chat_id, n=5)
+    history = getLastMessages(chat_id, n=MAX_SIZE_SHORT_TERM_MEMORY)
     response = orchestrateAgent(user_text, history)
     createMessage(chat_id, response, "Bot")

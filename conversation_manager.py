@@ -1,7 +1,8 @@
 import uuid
 import json
 from db import getDbConnection
-from consts import INTRO_MESSAGE
+from consts import INTRO_MESSAGE, MAX_SIZE_SHORT_TERM_MEMORY
+
 
 def createNewChat(chatName="Novi Chat", client_id=None):
     chat_id = str(uuid.uuid4())
@@ -135,7 +136,7 @@ def deleteMessage(chat_id, messageId):
     cursor.close()
     connection.close()
 
-def getLastMessages(chat_id, n=5):
+def getLastMessages(chat_id, n=MAX_SIZE_SHORT_TERM_MEMORY):
     chat = getChat(chat_id)
     if chat:
         return chat["messages"][-n:]
