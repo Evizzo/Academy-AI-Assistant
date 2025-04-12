@@ -113,3 +113,8 @@ if selected_chat:
             handleUserMessage(st.session_state.selected_chat_id, user_input)
             time.sleep(1)
         st.rerun()
+
+    footer_place = st.empty()
+    footer_place.markdown(
+        "<p style='color: gray; font-style: italic; font-size: 12px; position: fixed; bottom: 0; z-index: 9999;'>Veštačka inteligencija je sklona halucinacijama, proverite rezultate!</p>",
+        unsafe_allow_html=True)
