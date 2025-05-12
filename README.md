@@ -114,7 +114,7 @@ Use predefined MySQL users to authenticate.
 GOOGLE_API_KEY=
 PINECONE_API_KEY=
 PINECONE_INDEX_NAME=
-TOP_K=20
+TOP_K=
 EMBEDDING_MODEL="text-embedding-3-large"
 LLM_MODEL_NAME = "gemini-2.0-flash"
 ``` 
