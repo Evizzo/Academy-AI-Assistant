@@ -19,7 +19,7 @@ PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 EMBEDDING_MODEL_NAME= "paraphrase-multilingual-MiniLM-L12-v2"
 INDEX_DIMENSION     = 384
 CRAWL_DELAY_SEC     = 1    # politeness delay
-MAX_PAGES           = 20  # stop after this many pages
+MAX_PAGES           = 30  # stop after this many pages
 MAX_DEPTH           = 2    # max link-hops from start
 
 IMAGE_EXTENSIONS    = {'.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.bmp', '.ico', '.tif', '.tiff'}
