@@ -148,7 +148,12 @@ def main():
     for i, chunk in enumerate(chunks):
         try:
             emb = getEmbedding(chunk)
-            vectors.append((str(i), emb, {"text": chunk, "date_vectorised": now}))
+            metadata = {
+                "text": chunk,
+                "date_vectorised": now,
+                "source": "scraping"
+            }
+            vectors.append((str(i), emb, metadata))
         except Exception as e:
             logger.error(f"Error embedding chunk {i}: {e}")
 
