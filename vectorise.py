@@ -85,7 +85,11 @@ def main():
     for i, chunk in enumerate(chunks):
         try:
             embedding = get_embedding(chunk)
-            vectors.append((str(i), embedding, {"text": chunk, "date_vectorised": now}))
+            vectors.append((str(i), embedding, {
+                "text": chunk,
+                "date_vectorised": now,
+                "source": "file"
+            }))
             logger.info(f"Generisan embedding za segment {i}.")
         except Exception as e:
             logger.error(f"Greška pri obradi segmenta {i}: {e}")
