@@ -9,8 +9,10 @@ It combines Retrieval-Augmented Generation (RAG) with multi-agent orchestration 
 
 Academy Assistant delivers:
 	•	Structured Q&A for exam schedules and academic deadlines
-	•	Informational responses about programs, procedures, and services
-	•	Multilingual support with formal tone and Serbian Latin (Ekavian) script
+	
+ •	Informational responses about programs, procedures, and services
+	
+ •	Multilingual support with formal tone and Serbian Latin (Ekavian) script
 
 It blends LLM reasoning with semantic vector search to ensure grounded answers based strictly on available data.
 
@@ -58,7 +60,7 @@ Classifies queries as either exam-related or general, and routes them to the cor
 
 ✅ Usage
 
-1. Scrape and embed data from the official website
+1. Scrape and embed data from the website
 
 python scrapeAndVectorise.py
 
