@@ -1,5 +1,6 @@
 import os
 import time
+import re
 from datetime import datetime
 from urllib.parse import urljoin, urlparse
 from collections import deque
@@ -17,12 +18,18 @@ PINECONE_API_KEY    = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 EMBEDDING_MODEL_NAME= "paraphrase-multilingual-MiniLM-L12-v2"
 INDEX_DIMENSION     = 384
-CRAWL_DELAY_SEC     = 1
-INDEX             = None
-EMBEDDING_MODEL   = SentenceTransformer(EMBEDDING_MODEL_NAME)
+CRAWL_DELAY_SEC     = 1    # politeness delay
+MAX_PAGES           = 20  # stop after this many pages
+MAX_DEPTH           = 2    # max link-hops from start
+
+IMAGE_EXTENSIONS    = {'.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.bmp', '.ico', '.tif', '.tiff'}
+DOC_EXTENSIONS      = {'.pdf', '.doc', '.docx', '.xls', '.xlsx'}
+
+INDEX               = None
+EMBEDDING_MODEL     = SentenceTransformer(EMBEDDING_MODEL_NAME)
 
 
-def initialize_pinecone():
+def initializePinecone():
     pc = Pinecone(api_key=PINECONE_API_KEY)
     if PINECONE_INDEX_NAME not in pc.list_indexes().names():
         pc.create_index(
@@ -34,7 +41,7 @@ def initialize_pinecone():
     return pc.Index(PINECONE_INDEX_NAME)
 
 
-def cyrillic_to_latin(text: str) -> str:
+def cyrillicToLatin(text: str) -> str:
     table = str.maketrans({
         'А':'A','а':'a','Б':'B','б':'b','В':'V','в':'v','Г':'G','г':'g',
         'Д':'D','д':'d','Ђ':'Đ','ђ':'đ','Е':'E','е':'e','Ж':'Ž','ж':'ž',
@@ -48,49 +55,67 @@ def cyrillic_to_latin(text: str) -> str:
     return text.translate(table)
 
 
-def extract_links(html: str, base_url: str) -> set[str]:
+def extractLinks(html: str, baseUrl: str) -> set[str]:
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script","style","nav","footer","header"]):
         tag.decompose()
     found = set()
     for a in soup.find_all("a", href=True):
-        href = urljoin(base_url, a["href"])
+        href = urljoin(baseUrl, a["href"])
         p = urlparse(href)
-        if p.netloc == urlparse(base_url).netloc:
+        ext = os.path.splitext(p.path)[1].lower()
+        if p.netloc == urlparse(baseUrl).netloc and ext not in IMAGE_EXTENSIONS|DOC_EXTENSIONS:
             found.add(f"{p.scheme}://{p.netloc}{p.path}")
     return found
 
-def scrape_and_clean(html: str) -> str:
+
+def scrapeAndClean(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script","style","nav","footer","header"]):
         tag.decompose()
     raw = soup.get_text(separator="\n")
     lines = [ln.strip() for ln in raw.splitlines() if ln.strip()]
     combined = "\n".join(lines)
-    return cyrillic_to_latin(combined)
+    latin = cyrillicToLatin(combined)
+    return cleanText(latin)
 
 
-def crawl_site(start_url: str) -> str:
+def cleanText(text: str) -> str:
+    t = re.sub(r"\s+", " ", text)
+    t = t.replace("—", "-").replace("“", '"').replace("”", '"')
+    t = t.lower()
+    t = re.sub(r"(home|kontakt|footer).{0,100}", "", t)
+    return t
+
+
+def crawlSite(startUrl: str) -> str:
     visited = set()
-    queue   = deque([start_url])
+    queue   = deque([(startUrl, 0)])
     texts   = []
+    pages   = 0
 
-    while queue:
-        url = queue.popleft()
-        if url in visited:
+    while queue and pages < MAX_PAGES:
+        url, depth = queue.popleft()
+        if url in visited or depth>MAX_DEPTH:
             continue
         visited.add(url)
+        pages += 1
+
+        ext = os.path.splitext(urlparse(url).path)[1].lower()
+        if ext in IMAGE_EXTENSIONS|DOC_EXTENSIONS:
+            continue
 
         try:
             logger.info(f"Fetching {url}")
             resp = requests.get(url, timeout=10)
             html = resp.text
 
-            texts.append(scrape_and_clean(html))
+            texts.append(scrapeAndClean(html))
 
-            for link in extract_links(html, start_url):
-                if link not in visited:
-                    queue.append(link)
+            if depth < MAX_DEPTH:
+                for link in extractLinks(html, startUrl):
+                    if link not in visited:
+                        queue.append((link, depth+1))
 
             time.sleep(CRAWL_DELAY_SEC)
         except Exception as e:
@@ -99,21 +124,22 @@ def crawl_site(start_url: str) -> str:
     return "\n".join(texts)
 
 
-def chunk_text_with_langchain(text: str, chunk_size=500, chunk_overlap=50) -> list[str]:
-    splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+def chunkTextWithLangchain(text: str, chunkSize=500, chunkOverlap=50) -> list[str]:
+    splitter = RecursiveCharacterTextSplitter(chunk_size=chunkSize, chunk_overlap=chunkOverlap)
     return splitter.split_text(text)
 
-def get_embedding(text: str) -> list[float]:
+
+def getEmbedding(text: str) -> list[float]:
     return EMBEDDING_MODEL.encode(text).tolist()
 
 
 def main():
     global INDEX
-    INDEX = initialize_pinecone()
+    INDEX = initializePinecone()
 
-    start_url = "https://ar.asss.edu.rs/"
-    full_text = crawl_site(start_url)
-    chunks    = chunk_text_with_langchain(full_text)
+    startUrl = "https://ar.asss.edu.rs/"
+    fullText = crawlSite(startUrl)
+    chunks   = chunkTextWithLangchain(fullText)
 
     logger.info(f"Generated {len(chunks)} chunks.")
 
@@ -121,7 +147,7 @@ def main():
     vectors = []
     for i, chunk in enumerate(chunks):
         try:
-            emb = get_embedding(chunk)
+            emb = getEmbedding(chunk)
             vectors.append((str(i), emb, {"text": chunk, "date_vectorised": now}))
         except Exception as e:
             logger.error(f"Error embedding chunk {i}: {e}")
