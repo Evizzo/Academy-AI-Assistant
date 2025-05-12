@@ -1,126 +1,100 @@
-# 📘 Project Name: **Academy Assistant**
+📘 Project Name: Academy Assistant
 
-A professional multilingual chatbot tailored for the needs of students and staff at the Academy of Vocational Studies – Šumadija, Aranđelovac department. 
-It combines Retrieval-Augmented Generation (RAG) techniques with multi-agent orchestration to deliver highly accurate and context-aware academic support.
+A multilingual virtual assistant designed for the needs of students and staff at a higher education institution.
+It combines Retrieval-Augmented Generation (RAG) with multi-agent orchestration to provide accurate, structured, and context-aware academic support.
 
----
+⸻
 
-## 🚀 Overview
+🚀 Overview
 
-**Academy Assistant** is an intelligent virtual assistant built to support academic information delivery through:
+Academy Assistant delivers:
+	•	Structured Q&A for exam schedules and academic deadlines
+	•	Informational responses about programs, procedures, and services
+	•	Multilingual support with formal tone and Serbian Latin (Ekavian) script
 
-* Accurate and professional Q\&A on exam schedules
-* General information about academic processes and departments
-* Context-aware multilingual support
+It blends LLM reasoning with semantic vector search to ensure grounded answers based strictly on available data.
 
-The chatbot strictly adheres to communication rules, uses Serbian Latin (ekavian), and leverages a combination of LLMs and semantic search.
+⸻
 
----
+🧠 Features
+	•	Agent Orchestration
+Classifies queries as either exam-related or general, and routes them to the correct agent.
+	•	Exam Agent
+	•	Responds only to exam schedule questions.
+	•	Pulls data from a verified SQL database.
+	•	Example prompts:
+	•	“When is the Programming 101 exam?”
+	•	“What date is the Math final?”
+	•	General Info Agent
+	•	Handles all other queries (admissions, departments, services).
+	•	Uses semantic search + LLM synthesis for factual answers.
+	•	Embedding & Vector Search
+	•	Text embedded with paraphrase-multilingual-MiniLM-L12-v2.
+	•	Stored in Pinecone with metadata for fast, semantic retrieval.
+	•	Web Scraping + Chunking
+	•	Scrapes content from the institution’s official site.
+	•	Transliterates Cyrillic to Latin.
+	•	Cleans HTML and removes irrelevant sections.
+	•	Chunks content using RecursiveCharacterTextSplitter.
+	•	Attaches metadata like timestamp and source (“scraping”) during upsert.
+	•	Short-Term Memory
+	•	Maintains recent N messages for conversational continuity.
+	•	Secure Login
+	•	User sessions and chat history stored securely in MySQL.
+	•	Streamlit Frontend
+	•	Web-based interface with login, chat, and message history.
 
-## 🧠 Features
+⸻
 
-* **Agent Orchestration**: Automatically classifies user questions into two categories — *exam-related* and *general* — and routes them to the appropriate agent.
+🧰 Tech Stack
+	•	Python
+	•	LangChain + Google Gemini
+	•	SentenceTransformers
+	•	Pinecone
+	•	Streamlit
+	•	MySQL
 
-* **Exam Agent**:
+⸻
 
-  * Specializes in answering only exam-related questions.
-  * Uses a fixed, reliable data source from the database.
-  * Rejects any questions not strictly related to exam schedules.
-  * Always responds in professional tone and Serbian Latin script.
-  * Examples it can handle:
+✅ Usage
 
-    * "Kada je sledeći ispit iz predmeta Matematika?"
-    * "Koji je datum ispita za Osnove programiranja?"
+1. Scrape and embed data from the official website
 
-* **General Info Agent**:
-
-  * Handles all other inquiries about the academy's organization, staff, location, enrollment, programs, and administrative matters.
-  * Incorporates retrieved context using vector search to improve response accuracy.
-
-* **Embedding & Vector Search**:
-
-  * Converts documents into vector representations using `paraphrase-multilingual-MiniLM-L12-v2`.
-  * Uses Pinecone to search relevant context for the general agent.
-
-* **Web Scraping + Chunking Pipeline**:
-
-  * Scrapes raw text from the official department website `https://ar.asss.edu.rs/`.
-  * Converts cyrillic text to Latin.
-  * Cleans HTML by removing irrelevant sections like navigation, scripts, and styles.
-  * Splits content using LangChain's `RecursiveCharacterTextSplitter` to maintain semantic coherence.
-  * Each chunk is vectorized and stored in Pinecone for future retrieval.
-
-* **Short-Term Memory**:
-
-  * Keeps last N messages for continuity and context-awareness.
-
-* **Secure Client Login**:
-
-  * User sessions are authenticated via username/password stored in a MySQL DB.
-  * Users can view and manage their past conversations.
-
-* **Streamlit Frontend**:
-
-  * Clean and responsive UI for chatting.
-  * Chat history, message styling, and system notifications included.
-
----
-
-## 🧰 Tech Stack
-
-* **Python**
-* **LangChain + Google Gemini**
-* **SentenceTransformers**
-* **Pinecone** (semantic vector search)
-* **Streamlit** (UI)
-* **MySQL** (chat/message persistence)
-
----
-
-## ✅ Usage
-
-### 1. Scrape and embed data
-
-```bash
 python scrapeAndVectorise.py
-```
 
-This will scrape the content of the department website, chunk the text semantically, embed it, and upload to Pinecone.
+Scrapes site content, processes and chunks it, embeds it, and uploads vectors to Pinecone.
 
-### 1.1 Embed data from file
+1.1 Embed local data
 
-```bash
-python vectorse.py
-```
+python vectorise.py
 
-This will embed data from a file, and chunk it either by separator or by sentences.
+Embeds text files with options for chunking (sentence-based or delimiter-based).
 
-### 2. Run app
+2. Start the UI app
 
-```bash
-streamlit run your_main_file.py
-```
+streamlit run streamlit_app.py
 
-### 3. Login
+3. Authenticate and chat
 
-Use predefined MySQL users to authenticate.
+Log in using MySQL credentials to access personalized chat sessions.
 
----
+⸻
 
-# To run use ```streamlit run streamlit_app.py```
+⚙️ Environment Variables
 
-# Needed env variables
-```
 GOOGLE_API_KEY=
 PINECONE_API_KEY=
 PINECONE_INDEX_NAME=
 TOP_K=
 EMBEDDING_MODEL="text-embedding-3-large"
-LLM_MODEL_NAME = "gemini-2.0-flash"
-``` 
+LLM_MODEL_NAME="gemini-2.0-flash"
 
-# Database schema setup
-```sql
+
+
+⸻
+
+🗄️ Database Schema
+
 CREATE TABLE clients (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -142,4 +116,3 @@ CREATE TABLE conversations (
     messages JSON NOT NULL,
     FOREIGN KEY (client_id) REFERENCES clients(id)
 );
-```
