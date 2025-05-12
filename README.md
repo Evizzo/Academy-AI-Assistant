@@ -9,9 +9,9 @@ It combines Retrieval-Augmented Generation (RAG) with multi-agent orchestration 
 
 Academy Assistant delivers:
 
- •	Structured Q&A for exam schedules and academic deadlines
+ •	Structured Q&A for exam schedules, academic deadlines and information about exams
 	
- •	Informational responses about programs, procedures, and services
+ •	Informational responses about general information about the institution
 	
  •	Multilingual support with formal tone and Serbian Latin (Ekavian) script
 
@@ -21,42 +21,31 @@ It blends LLM reasoning with semantic vector search to ensure grounded answers b
 
 🧠 Features
 
- •	Agent Orchestration
-Classifies queries as either exam-related or general, and routes them to the correct agent.
-	•	Exam Agent
-	•	Responds only to exam schedule questions.
-	•	Pulls data from a verified SQL database.
-	•	Example prompts:
-	•	“When is the Programming 101 exam?”
-	•	“What date is the Math final?”
-	•	General Info Agent
-	•	Handles all other queries (admissions, departments, services).
-	•	Uses semantic search + LLM synthesis for factual answers.
-	•	Embedding & Vector Search
-	•	Text embedded with paraphrase-multilingual-MiniLM-L12-v2.
-	•	Stored in Pinecone with metadata for fast, semantic retrieval.
-	•	Web Scraping + Chunking
-	•	Scrapes content from the institution’s official site.
-	•	Transliterates Cyrillic to Latin.
-	•	Cleans HTML and removes irrelevant sections.
-	•	Chunks content using RecursiveCharacterTextSplitter.
-	•	Attaches metadata like timestamp and source (“scraping”) during upsert.
-	•	Short-Term Memory
-	•	Maintains recent N messages for conversational continuity.
-	•	Secure Login
-	•	User sessions and chat history stored securely in MySQL.
-	•	Streamlit Frontend
-	•	Web-based interface with login, chat, and message history.
+•	Example prompts:
+	“When is the Programming 101 exam?”
+	“What date is the Math final?”
 
-⸻
+•	Uses semantic search + LLM synthesis for factual answers.
 
-🧰 Tech Stack
-	•	Python
-	•	LangChain + Google Gemini
-	•	SentenceTransformers
-	•	Pinecone
-	•	Streamlit
-	•	MySQL
+•	Embedding & Vector Search
+
+•	Text embedded with paraphrase-multilingual-MiniLM-L12-v2.
+
+•	Stored in Pinecone with metadata for fast, semantic retrieval.
+
+•	Web Scraping + Chunking
+
+•	Transliterates Cyrillic to Latin.
+
+•	Cleans HTML and removes irrelevant sections.
+
+•	Chunks content using RecursiveCharacterTextSplitter.
+
+•	Short-Term Memory
+
+•	User sessions and chat history stored securely in MySQL.
+
+•	Streamlit Frontend
 
 ⸻
 
@@ -92,8 +81,6 @@ PINECONE_INDEX_NAME=
 TOP_K=
 EMBEDDING_MODEL="text-embedding-3-large"
 LLM_MODEL_NAME="gemini-2.0-flash"
-
-
 
 ⸻
 
