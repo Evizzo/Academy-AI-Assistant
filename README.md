@@ -9,7 +9,7 @@ It combines Retrieval-Augmented Generation (RAG) with multi-agent orchestration 
 
 Academy Assistant delivers:
 
-	•	Structured Q&A for exam schedules and academic deadlines
+ •	Structured Q&A for exam schedules and academic deadlines
 	
  •	Informational responses about programs, procedures, and services
 	
@@ -21,7 +21,7 @@ It blends LLM reasoning with semantic vector search to ensure grounded answers b
 
 🧠 Features
 
-	•	Agent Orchestration
+ •	Agent Orchestration
 Classifies queries as either exam-related or general, and routes them to the correct agent.
 	•	Exam Agent
 	•	Responds only to exam schedule questions.
