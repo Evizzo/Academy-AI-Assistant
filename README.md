@@ -42,6 +42,14 @@ The chatbot strictly adheres to communication rules, uses Serbian Latin (ekavian
   * Converts documents into vector representations using `paraphrase-multilingual-MiniLM-L12-v2`.
   * Uses Pinecone to search relevant context for the general agent.
 
+* **Web Scraping + Chunking Pipeline**:
+
+  * Scrapes raw text from the official department website `https://ar.asss.edu.rs/`.
+  * Converts cyrillic text to Latin.
+  * Cleans HTML by removing irrelevant sections like navigation, scripts, and styles.
+  * Splits content using LangChain's `RecursiveCharacterTextSplitter` to maintain semantic coherence.
+  * Each chunk is vectorized and stored in Pinecone for future retrieval.
+
 * **Short-Term Memory**:
 
   * Keeps last N messages for continuity and context-awareness.
@@ -71,13 +79,13 @@ The chatbot strictly adheres to communication rules, uses Serbian Latin (ekavian
 
 ## ✅ Usage
 
-### 1. Embed data
+### 1. Scrape and embed data
 
 ```bash
 python vectorise.py
 ```
 
-Choose chunking method and file path.
+This will scrape the content of the department website, chunk the text semantically, embed it, and upload to Pinecone.
 
 ### 2. Run app
 
