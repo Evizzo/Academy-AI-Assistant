@@ -27,7 +27,6 @@ PRAVILA
 </context>
 """
 
-
 orchestrationAgent = """
 Vi ste agent za orkestraciju.
 Vaš zadatak je da odlučite koji agent treba da se pokrene na osnovu korisničkog upita.
