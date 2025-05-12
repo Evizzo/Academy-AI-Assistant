@@ -82,10 +82,18 @@ The chatbot strictly adheres to communication rules, uses Serbian Latin (ekavian
 ### 1. Scrape and embed data
 
 ```bash
-python vectorise.py
+python scrapeAndVectorise.py
 ```
 
 This will scrape the content of the department website, chunk the text semantically, embed it, and upload to Pinecone.
+
+### 1.1 Embed data from file
+
+```bash
+python vectorse.py
+```
+
+This will embed data from a file, and chunk it either by separator or by sentences.
 
 ### 2. Run app
 
