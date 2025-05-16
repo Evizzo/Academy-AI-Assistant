@@ -30,8 +30,9 @@ def initialize_pinecone():
 INDEX = initialize_pinecone()
 EMBEDDING_MODEL = SentenceTransformer(EMBEDDING_MODEL_NAME)
 
-def search_context(query: str) -> str:
+def search_context(query: str, shortTermMemory: str) -> str:
     from agents import runAgentSimple
+    query = query + "\nProšle interakcije:\n" + shortTermMemory
     query = runAgentSimple(query, resolveSerbianLatin)
     logger.info(f"Optimised Serbian latin: {query}")
     query_embedding = EMBEDDING_MODEL.encode(query).tolist()

@@ -69,7 +69,8 @@ def orchestrateAgent(query, conversationHistory):
 
 def runAgent(query, conversationHistory, promptTemplate, vector_search=False, **promptVars):
     if vector_search:
-        vector_context = search_context(query)
+        shortTermMemory = "\n".join([f'{msg["sender"]}: {msg["content"]}' for msg in conversationHistory])
+        vector_context = search_context(query, shortTermMemory)
         promptVars["context"] = vector_context
 
     formattedPrompt = formatPrompt(promptTemplate, **promptVars) if promptVars else promptTemplate
