@@ -17,7 +17,6 @@ load_dotenv()
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
-TOP_K = int(os.getenv("TOP_K", "15"))
 EMBEDDING_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 PINECONE_ENV = os.getenv("PINECONE_ENV", "us-west1-gcp")
 CHUNK_SIZE = 3

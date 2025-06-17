@@ -11,7 +11,7 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME")
 
-globalModel = ChatGoogleGenerativeAI(model=LLM_MODEL_NAME, temperature=0.75, google_api_key=GOOGLE_API_KEY)
+globalModel = ChatGoogleGenerativeAI(model=LLM_MODEL_NAME, temperature=0.1, google_api_key=GOOGLE_API_KEY)
 logger.info(f"Inicijalizovan globalModel sa modelom {LLM_MODEL_NAME}.")
 
 def runAgentSimple(query, promptTemplate):
