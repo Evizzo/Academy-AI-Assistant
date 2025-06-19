@@ -141,6 +141,8 @@ CREATE TABLE conversations (
 );
 ```
 
+**Important:** The `examDates` table is used by the application to store and retrieve exam information. When users ask questions about exam schedules, the assistant will query this table directly from the MySQL database to provide accurate, up-to-date exam information. Make sure to populate this table with your institution's up to date exam data. Outdated exam data must be deleted.
+
 #### 5. Setup Pinecone Vector Database
 
 1. **Create Pinecone Account:**
