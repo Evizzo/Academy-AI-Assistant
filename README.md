@@ -247,9 +247,13 @@ Once setup is complete:
 ⚙️ Environment Variables
 
 GOOGLE_API_KEY=
+
 PINECONE_API_KEY=
+
 PINECONE_INDEX_NAME=
+
 TOP_K=25
+
 LLM_MODEL_NAME="gemini-2.5-flash-preview-05-20"
 
 ⸻
