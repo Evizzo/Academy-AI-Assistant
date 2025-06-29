@@ -66,3 +66,6 @@ Studije, smerovi (osnovne studije) koje škola nudi su Informacione tehnologije 
 ,Poslovna ekonomija (u pripremi).
 
 Master smerovi, strukovne studije koje nudi škola su Inžinjerstvo zaštitne sredine i Turističko poslovanje.
+
+Ucionica 1, Ucionica 6, Ucionica 2 se nalaze na drugom spratu (2. sprat) škole.
+Ucionica 3, Ucionica 4, Ucionica 5 se nalaze na prvom spratu (1. sprat) škole.
